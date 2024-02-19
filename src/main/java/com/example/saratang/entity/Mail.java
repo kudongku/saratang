@@ -19,6 +19,10 @@ public class Mail {
     @Column(nullable = false)
     private String encodedEmail;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public Mail(String mail, String encodedEmail) {
         this.email = mail;
         this.encodedEmail = encodedEmail;
