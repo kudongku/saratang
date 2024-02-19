@@ -13,11 +13,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
 
@@ -30,25 +31,28 @@ public class UserService {
         String username = signupRequestDto.getUsername();
         String encodedPassword = encoder.encrypt(signupRequestDto.getPassword());
         String email = signupRequestDto.getEmail();
-        String emailVerifyKey = signupRequestDto.getEmailVerifyKey();
+        String emailVerifyKey = signupRequestDto.getEncodedEmail();
 
         if (userRepository.findByUsername(username).isPresent()) {
-            return ResponseEntity.status(400).body(new CommonResponseDto("동일한 아이디가 존재합니다.", 400));
+            throw new IllegalArgumentException("동일한 아이디가 존재합니다.");
         }
 
-        if (userRepository.findByEmail(email).isPresent()) {
-            return ResponseEntity.status(400).body(new CommonResponseDto("동일한 이메일이 존재합니다.", 400));
+        Mail mail = mailRepository.findByEmail(email).orElseThrow(
+                () -> new NullPointerException("메일 인증이 이루어지지 않았습니다.")
+        );
+
+        if (mail.getUser() != null) {
+            throw new IllegalArgumentException("이미 가입된 메일입니다.");
         }
 
-        Optional<Mail> mail = mailRepository.findByEmail(email);
-
-        if (mail.isEmpty()) {
-            return ResponseEntity.status(400).body(new CommonResponseDto("메일 인증이 이루어지지 않았습니다.", 400));
-        } else if (!mail.get().getEncodedEmail().equals(emailVerifyKey)) {
-            return ResponseEntity.status(400).body(new CommonResponseDto("인증키가 올바르지 않습니다..", 400));
+        if (!mail.getEncodedEmail().equals(emailVerifyKey)) {
+            throw new IllegalArgumentException("인증키가 올바르지 않습니다.");
         }
 
-        userRepository.save(new User(signupRequestDto, encodedPassword));
+        User user = new User(signupRequestDto, encodedPassword);
+        mail.updateUser(user);
+        userRepository.save(user);
+
         return ResponseEntity.status(200).body(new CommonResponseDto("회원가입 성공", 200));
     }
 

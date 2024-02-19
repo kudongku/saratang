@@ -10,10 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MailService {
     private static final String senderEmail = "kudongku@gmail.com";
@@ -22,6 +24,11 @@ public class MailService {
     private final Encoder encoder;
 
     public ResponseEntity<CommonResponseDto> verifyMail(MailRequestDto mailRequestDto) throws NoSuchAlgorithmException {
+
+        if(mailRepository.findByEmail(mailRequestDto.getMail()).isPresent()){
+            throw new IllegalArgumentException("인증메일이 이미 보내졌습니다.");
+        }
+
         String title = "[사라탕] 가입 인증 메일입니다.";
         String contentHeader = "인증번호는\n";
         String contentFooter = "\n입니다.";

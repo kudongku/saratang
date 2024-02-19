@@ -22,12 +22,9 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String email;
 
     public User(SignupRequestDto signupRequestDto, String encodedPassword) {
         this.username = signupRequestDto.getUsername();
         this.password = encodedPassword;
-        this.email = signupRequestDto.getEmail();
     }
 }

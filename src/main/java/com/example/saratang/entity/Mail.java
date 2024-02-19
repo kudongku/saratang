@@ -27,4 +27,8 @@ public class Mail {
         this.email = mail;
         this.encodedEmail = encodedEmail;
     }
+
+    public void updateUser(User user) {
+        this.user = user;
+    }
 }
