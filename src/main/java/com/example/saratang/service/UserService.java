@@ -62,7 +62,7 @@ public class UserService {
         );
 
         if (!encoder.encrypt(loginRequestDto.getPassword()).equals(user.getPassword())) {
-            return ResponseEntity.status(400).body(new CommonResponseDto("비밀번호가 올바르지 않습니다.", 400));
+            throw new IllegalArgumentException("비밀번호가 올바르지 않습니다.");
         }
 
         jwtUtil.addToken(user.getUsername(), res);
