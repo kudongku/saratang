@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @GetMapping("/kakao/callback")
-    public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+    public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException, NoSuchAlgorithmException {
         kakaoService.kakaoLogin(code, response);
         return "redirect:/";
     }

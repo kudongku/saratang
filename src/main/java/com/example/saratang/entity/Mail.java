@@ -16,7 +16,7 @@ public class Mail {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String encodedEmail;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -26,6 +26,11 @@ public class Mail {
     public Mail(String mail, String encodedEmail) {
         this.email = mail;
         this.encodedEmail = encodedEmail;
+    }
+
+    public Mail(String email, User kakaoUser) {
+        this.email = email;
+        this.user = kakaoUser;
     }
 
     public void updateUser(User user) {
