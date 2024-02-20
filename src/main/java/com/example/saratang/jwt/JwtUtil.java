@@ -21,7 +21,7 @@ public class JwtUtil {
     private Key key;
     public final String BEARER_PREFIX = "Bearer";
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-    public final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String AUTHORIZATION_HEADER = "Authorization";
 
     @PostConstruct
     public void init() {

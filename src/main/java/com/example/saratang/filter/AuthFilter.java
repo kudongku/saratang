@@ -27,7 +27,7 @@ public class AuthFilter implements Filter {
         String url = httpServletRequest.getRequestURI();
 
         if (StringUtils.hasText(url) &&
-                (url.startsWith("/api/users") || url.startsWith("/css") || url.startsWith("/js") || url.startsWith("/api/mails"))
+                (url.startsWith("/api/users") || url.startsWith("/css") || url.startsWith("/js") || url.startsWith("/api/mails") || url.startsWith("/favicon.ico"))
         ) {
             log.info("인증처리가 필요없는 URL");
             chain.doFilter(request, response); // 다음 Filter 로 이동
